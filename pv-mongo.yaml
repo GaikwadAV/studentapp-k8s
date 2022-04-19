@@ -11,3 +11,6 @@ spec:
     - ReadWriteOnce
   hostPath:
     path: /data/mongodata
+  claimRef:
+    name: task-pv-claim
+    namespace: dev

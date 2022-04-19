@@ -3,23 +3,24 @@ kind: Deployment
 metadata:
   name: mongodb
   labels:
-    app: mongodb
+    app: mongodatabase
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mongodb
+      app: mongod
   template:
     metadata:
+      name: mongodb-pod
       labels:
-        app: mongodb
+        app: mongod
     spec:
       volumes:
-      - name: task-pv-storage
+      - name: task-pv-local
         persistentVolumeClaim:
           claimName: task-pv-claim
       containers:
-      - name: mongodb
+      - name: mongodatabase
         image: mongo
         resources:
           limits:
@@ -29,15 +30,15 @@ spec:
         - containerPort: 27017
         volumeMounts:
         - mountPath: /data/db
-          name: task-pv-storage
+          name: task-pv-local
         env:
-        - name: MONGO_INITDB_ROOT_USERNAME
+        - name: mongo-root-username
           valueFrom:
             secretKeyRef:
-              name: mongodb-secret
-              key: mongo-root-username
-        - name: MONGO_INITDB_ROOT_PASSWORD
+              name: mongo-secret
+              key: MONGO_INITDB_ROOT_USERNAME
+        - name: mongo-root-password
           valueFrom: 
             secretKeyRef:
-              name: mongodb-secret
-              key: mongo-root-password
+              name: mongo-secret
+              key: MONGO_INITDB_ROOT_PASSWORD
